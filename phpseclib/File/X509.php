@@ -4097,4 +4097,24 @@ class X509
     {
         $this->extensionValues[$id] = compact('critical', 'replace', 'value');
     }
+
+    /**
+     * @param string $signingCertKeyAlgorithm
+     * @param string $signingCertPublicKey
+     * @return bool
+     */
+    public function verifyBySigningCert(string $signingCertKeyAlgorithm, string $signingCertPublicKey): bool
+    {
+        if (empty($this->currentCert)) {
+            return false;
+        }
+
+        return $this->validateSignatureHelper(
+            $signingCertKeyAlgorithm,
+            $signingCertPublicKey,
+            $this->currentCert['signatureAlgorithm']['algorithm'],
+            substr($this->currentCert['signature'], 1),
+            $this->signatureSubject
+        );
+    }
 }
